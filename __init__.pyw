@@ -1,9 +1,10 @@
-from subprocess import Popen
+from PyQt5 import QtWidgets
+from views.Main import Ui_MainWindow
+import sys
 
-data = {
-	'title': 'teste',
-	'hour': '14:31'
-}
-
-
-Popen(["pythonw", "controllers/WaitHour.pyw", data['title'], data['hour']], shell=False)
+app = QtWidgets.QApplication(sys.argv)
+MainWindow = QtWidgets.QMainWindow()
+ui = Ui_MainWindow()
+ui.setupUi(MainWindow)
+MainWindow.show()
+sys.exit(app.exec_())

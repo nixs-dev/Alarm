@@ -14,7 +14,7 @@ class WaitHour(Thread):
     def __init__(self, title, hour):
         super().__init__()
         self.title = title
-        self.hour = hour + ':00'
+        self.hour = hour
 
     def run(self):
         while datetime.now().strftime("%H:%M:%S") != self.hour:
