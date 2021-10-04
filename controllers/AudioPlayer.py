@@ -6,7 +6,7 @@ class AudioPlayer:
     song = ''
     player = None
 
-    def __init__(self, song):
+    def __new__(self, song):
         self.song = song
 
         url = C.QUrl.fromLocalFile(self.song)
@@ -14,7 +14,8 @@ class AudioPlayer:
         self.player = M.QMediaPlayer()
         self.player.setMedia(content)
 
-
+        return self
+        
     def play(self):
         self.player.play()
 

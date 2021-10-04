@@ -38,7 +38,7 @@ class Ui_AlertWindow(object):
     def startSong(self):
         soundPath = os.getcwd() + '/assets/notificationSound.mp3'
         player = AudioPlayer(soundPath)
-        player.play()
+        player.play(player)
 
     def setupData(self, thread):
         self.alarmTitle.setText(thread.title)
@@ -100,5 +100,5 @@ class Ui_AlertWindow(object):
         self.postponeAlarm.setText(_translate("AlertWindow", "Adiar"))
         self.stopAlarm.setText(_translate("AlertWindow", "Parar"))
 
-        self.setupData(thread)
+        #self.setupData(thread)
 
