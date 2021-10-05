@@ -9,9 +9,70 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from controllers.Manager import AlarmManager
 from subprocess import Popen
+from functools import partial
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
+
+    def reloadAlarms(self, layout):
+        while layout.count():
+            child = layout.takeAt(0)
+            if child.widget() is not None:
+                child.widget().deleteLater()
+            elif child.layout() is not None:
+                self.clearTasks(child.layout(), None)
+
+        self.showActiveAlarms()
+
+    def stopSpecificAlarm(self, id_):
+        AlarmManager.removeAlarm(id_)
+        self.reloadAlarms(self.alarmsHorizontalLayout)
+
+    def getDefaultAlarmFrame(self, data):
+        self.alarmFrame = QtWidgets.QFrame()
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.alarmFrame.sizePolicy().hasHeightForWidth())
+        self.alarmFrame.setSizePolicy(sizePolicy)
+        self.alarmFrame.setMinimumSize(QtCore.QSize(150, 200))
+        self.alarmFrame.setStyleSheet("background-color: rgb(255, 125, 238);")
+        self.alarmFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.alarmFrame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.alarmFrame.setObjectName("alarmFrame")
+        self.specificAlarmTitle = QtWidgets.QLabel(self.alarmFrame)
+        self.specificAlarmTitle.setGeometry(QtCore.QRect(0, 20, 150, 13))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.specificAlarmTitle.setFont(font)
+        self.specificAlarmTitle.setAlignment(QtCore.Qt.AlignCenter)
+        self.specificAlarmTitle.setText(data['title'])
+        self.specificAlarmTitle.setObjectName("specificAlarmTitle")
+        self.specificAlarmTime = QtWidgets.QLabel(self.alarmFrame)
+        self.specificAlarmTime.setGeometry(QtCore.QRect(0, 50, 150, 13))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.specificAlarmTime.setFont(font)
+        self.specificAlarmTime.setAlignment(QtCore.Qt.AlignCenter)
+        self.specificAlarmTime.setObjectName("specificAlarmTime")
+        self.specificAlarmTime.setText(data['time'])
+        self.stopAlarmButton = QtWidgets.QPushButton(self.alarmFrame)
+        self.stopAlarmButton.setGeometry(QtCore.QRect(40, 140, 75, 23))
+        self.stopAlarmButton.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.stopAlarmButton.setObjectName("stopAlarmButton")
+        self.stopAlarmButton.setText("Parar")
+        self.stopAlarmButton.clicked.connect(partial(self.stopSpecificAlarm, data['ID']))
+
+        return self.alarmFrame
+
+    def showActiveAlarms(self):
+        alarms = AlarmManager.getAll()
+
+        for a in alarms:
+            alarmFrame = self.getDefaultAlarmFrame(a)
+            self.alarmsHorizontalLayout.addWidget(alarmFrame)
+
     def checkFields(self, list_):
         for i in list_:
             if i.replace(' ', '') == '':
@@ -29,8 +90,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 'title': title,
                 'hour': timeData
             }
-
+            
             Popen(["pythonw", "controllers/WaitHour.pyw", data['title'], data['hour']], shell=False)
+            self.reloadAlarms(self.alarmsHorizontalLayout)
             QtWidgets.QMessageBox.about(self, 'Sucesso', 'Alarme inicializado!')
 
     def setupUi(self, MainWindow):
@@ -89,9 +151,22 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font.setPointSize(14)
         self.label.setFont(font)
         self.label.setObjectName("label")
+        self.scrollAreaAlarms = QtWidgets.QScrollArea(self.centralwidget)
+        self.scrollAreaAlarms.setGeometry(QtCore.QRect(9, 129, 681, 251))
+        self.scrollAreaAlarms.setWidgetResizable(True)
+        self.scrollAreaAlarms.setObjectName("scrollAreaAlarms")
+        self.scrollAreaAlarmsWidget = QtWidgets.QWidget()
+        self.scrollAreaAlarmsWidget.setGeometry(QtCore.QRect(0, 0, 679, 249))
+        self.scrollAreaAlarmsWidget.setObjectName("scrollAreaAlarmsWidget")
+        self.alarmsHorizontalLayout = QtWidgets.QHBoxLayout(self.scrollAreaAlarmsWidget)
+        self.alarmsHorizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.alarmsHorizontalLayout.setObjectName("alarmsHorizontalLayout")
+        self.scrollAreaAlarms.setWidget(self.scrollAreaAlarmsWidget)
         MainWindow.setCentralWidget(self.centralwidget)
 
+
         self.defineAlarm.clicked.connect(self.startNewAlarm)
+        self.showActiveAlarms()
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
