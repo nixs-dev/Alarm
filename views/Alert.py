@@ -33,6 +33,7 @@ class Ui_AlertWindow(object):
         self.window.close()
 
     def finishAlarm(self):
+        self.thread.eraseAlarmData()
         self.window.close()
 
     def startSong(self):

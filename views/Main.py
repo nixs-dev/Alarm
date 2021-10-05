@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from controllers.Manager import AlarmManager
-from subprocess import Popen
+from subprocess import Popen, check_output
 from functools import partial
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
@@ -91,7 +91,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 'hour': timeData
             }
             
-            Popen(["pythonw", "controllers/WaitHour.pyw", data['title'], data['hour']], shell=False)
+            command = ["pythonw", "controllers/WaitHour.pyw", data['title'], data['hour']]
+
+            Popen(command, shell=False)
             self.reloadAlarms(self.alarmsHorizontalLayout)
             QtWidgets.QMessageBox.about(self, 'Sucesso', 'Alarme inicializado!')
 

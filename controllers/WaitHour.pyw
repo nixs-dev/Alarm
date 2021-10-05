@@ -41,12 +41,15 @@ class WaitHour(Thread):
         stoppedByUser = False
 
         while datetime.now().strftime("%H:%M:%S") != self.hour:
-            if AlertManager.checkIsEnabled(self.id):
+            if not AlarmManager.checkIsEnabled(self.id):
                 stoppedByUser = True
                 break
 
         if not stoppedByUser:
             self.alertUser()
+
+    def eraseAlarmData(self):
+        AlarmManager.removeAlarm(self.id)
         
 args = sys.argv
 
