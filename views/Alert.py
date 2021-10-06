@@ -15,6 +15,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 sys.path.insert(0, os.getcwd().replace('\\views', ''))
 
 from controllers.AudioPlayer import AudioPlayer
+from controllers.Manager import AlarmManager
 from subprocess import Popen
 
 
@@ -27,9 +28,10 @@ class Ui_AlertWindow(object):
         title = self.thread.title
         timeData = self.thread.hour.split(':')
 
-        newTime = str(timeData[0]) + ':' + str(int(timeData[1]) + 1)
+        newTime = str(timeData[0]) + ':' + str(int(timeData[1]) + 1) + ':' + str(timeData[2])
 
-        Popen(["pythonw", os.getcwd() + "/controllers/WaitHour.pyw", title, newTime], shell=False)
+        AlarmManager.removeAlarm(self.thread.id)
+        Popen(["pythonw", os.getcwd().replace('\\views', '') + "/controllers/WaitHour.pyw", title, newTime], shell=False)
         self.window.close()
 
     def finishAlarm(self):
@@ -101,5 +103,5 @@ class Ui_AlertWindow(object):
         self.postponeAlarm.setText(_translate("AlertWindow", "Adiar"))
         self.stopAlarm.setText(_translate("AlertWindow", "Parar"))
 
-        #self.setupData(thread)
+        self.setupData(self.thread)
 

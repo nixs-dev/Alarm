@@ -17,7 +17,7 @@ class WaitHour(Thread):
         super().__init__()
         self.id = self.generateID()
         self.title = title
-        self.hour = hour
+        self.hour = self.formatTime(hour)
 
         to_save = {'id': self.id,
                    'title': self.title,
@@ -26,6 +26,14 @@ class WaitHour(Thread):
 
         AlarmManager.saveAlarm(to_save)
 
+
+    def formatTime(self, time_):
+        time_ = time_.split(':')
+        for i, t in enumerate(time_):
+            if len(t) == 1:
+                time_[i] = '0' + str(t)
+
+        return ':'.join(time_)
     def alertUser(self):
         app = QtWidgets.QApplication(sys.argv)
         AlertWindow = QtWidgets.QMainWindow()
