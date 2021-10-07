@@ -2,7 +2,7 @@ import os
 import json
 
 class AlarmManager():
-	data_path = os.getcwd().replace('\\controllers', '') + '\\activeAlarms.tm'
+	data_path = os.path.dirname(os.path.realpath(__file__)).replace('\\controllers', '') + '\\activeAlarms.tm'
 
 	def saveAlarm(data_list):
 		with open(AlarmManager.data_path, 'a+') as file_:
@@ -16,12 +16,16 @@ class AlarmManager():
 		alarms = []
 		with open(AlarmManager.data_path, 'r') as file_:
 			for line in file_.readlines():
-				line = line.replace("'", '"')
+				line = line.replace("'", '"').replace('\n', '')
 
 				if line != '':
 					alarm = json.loads(line)
 					alarms.append(alarm)
 		return alarms
+
+	def clearData():
+		with open(AlarmManager.data_path, 'w') as file_:
+			file_.write('')
 
 	def checkIsEnabled(id_):
 		alarms = AlarmManager.getAll()

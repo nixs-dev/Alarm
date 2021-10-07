@@ -31,7 +31,7 @@ class Ui_AlertWindow(object):
         newTime = str(timeData[0]) + ':' + str(int(timeData[1]) + 1) + ':' + str(timeData[2])
 
         AlarmManager.removeAlarm(self.thread.id)
-        Popen(["pythonw", os.getcwd().replace('\\views', '') + "/controllers/WaitHour.pyw", title, newTime], shell=False)
+        Popen(["pythonw", "../controllers/WaitHour.pyw", title, newTime], shell=False)
         self.window.close()
 
     def finishAlarm(self):

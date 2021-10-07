@@ -1,7 +1,7 @@
 import sys
 import os
 
-sys.path.insert(0, os.getcwd().replace('\\controllers', ''))
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)).replace('\\controllers', ''))
 
 from threading import Thread
 from datetime import datetime
@@ -34,6 +34,7 @@ class WaitHour(Thread):
                 time_[i] = '0' + str(t)
 
         return ':'.join(time_)
+        
     def alertUser(self):
         app = QtWidgets.QApplication(sys.argv)
         AlertWindow = QtWidgets.QMainWindow()

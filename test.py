@@ -5,5 +5,5 @@ data = {
 	'title': 'hds',
 	'time': '12:00:00'
 }
-a = AlarmManager.saveAlarm(data)
+a = AlarmManager.getAll()
 print(a)
